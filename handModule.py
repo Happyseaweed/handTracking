@@ -78,16 +78,21 @@ class HandDetector():
         total = 0
         indexList = []
         if self.results.multi_hand_landmarks:
-            for i in range(8, 24, 4):
-                if self.retList[i][2] < self.retList[i-2][2]:
-                    indexList.append(i)
-                    total+=1
-            
             center = self.center_of_mass(img, handNo)    
             palm_c = self.palm_center(img, handNo)
 
-            distA = self.dist(palm_c[0][0], palm_c[0][1], self.retList[4][0], self.retList[4][1])
-            distB = self.dist(palm_c[0][0], palm_c[0][1], self.retList[2][0], self.retList[2][1])
+            for i in range(8, 24, 4):
+                distA = self.dist(palm_c[0][0], palm_c[0][1], self.retList[i][1], self.retList[i][2])
+                distB = self.dist(palm_c[0][0], palm_c[0][1], self.retList[i-2][1], self.retList[i-2][2])
+                # cv.circle(img, (self.retList[i][1], self.retList[i][2]), 10, (255, 255, 255), 10)
+                
+                print(i," ",distA, " " ,distB)
+                if distA > distB:
+                    indexList.append(i)
+                    total+=1
+
+            distA = self.dist(palm_c[0][0], palm_c[0][1], self.retList[4][1], self.retList[4][2])
+            distB = self.dist(palm_c[0][0], palm_c[0][1], self.retList[2][1], self.retList[2][2])
             
             if (distA > distB):
                 indexList.append(4)
