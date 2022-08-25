@@ -21,6 +21,7 @@ dist():                 Finds the distance between two points.                  
 * Example:
 
 ```python
+# Declare stuff
 
 detector = hm.HandDetector(detectionCon = 0.75, trackCon = 0.6)
 
@@ -28,10 +29,17 @@ while cap.isOpened():
 
     success, frame = cap.read()
 
-    img = detector.findHands(frame)
+    # You can change the display window size by resizing frame here.
+
+    img = detector.findHands(frame) # Draws hands onto img
+
     detector.findPosition(frame, 2)
 
     # do stuff:
+    # If you want to draw stuff or add text, draw it onto img, not frame.
+
+
+    cv.imshow('Video', img)         # Display img.
 
 cap.release()
 cv.destroyAllWindows()
