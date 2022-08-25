@@ -1,5 +1,5 @@
 # OpenCV & Mediapipe Hand Tracking Module
-A hand tracking module for OpenCV and Mediapipe. Contains various functions such as counting fingers, finding hands on an image, finding positions of landmarks (return a list), checking if the hand is grabbing, etc.
+A hand tracking module for OpenCV and Mediapipe. Contains various functions such as counting fingers, finding positions of landmarks (return a list), checking if the hand is grabbing, checking which direction the hand is dragging/swipping, etc.
 
 # Functions
 ```
