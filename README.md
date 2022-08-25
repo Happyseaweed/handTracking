@@ -8,9 +8,33 @@ findHands():            Finds and plots the skeletal structure on image.        
 findPosition():         Finds the position of each hand landmark.                           [Returns a list]
 fingerCount():          Counts how many fingers are held up. Works best with upright hand.  [Returns a list]
 checkGrab():            Checks if the hand makes a grab gesture.                            [Returns a boolean]
+checkGrabAlt():         Alternative method for checkGrab(). [Returns a boolean]
+swipeDirection():       Checks which way the user swipes their hand while grabbing. [Returns a string]
 center_of_mass():       Finds the center of mass of the hand, indicated by a red dot.       [Returns a list]
 palm_center():          Finds the center of the palm, indicated by a blue dot.              [Returns a list]
 dist():                 Finds the distance between two points.                              [Returns a float]
+```
+
+# How to use:
+* create detector object and then call ```.findHands() and .findPosition()``` at beginning of each OpenCV iteration.
+* Call the functions as needed, they can be called in the loop.
+* Example:
+
+```python
+
+detector = hm.HandDetector(detectionCon = 0.75, trackCon = 0.6)
+
+while cap.isOpened():
+
+    success, frame = cap.read()
+
+    img = detector.findHands(frame)
+    detector.findPosition(frame, 2)
+
+    # do stuff:
+
+cap.release()
+cv.destroyAllWindows()
 ```
 
 # Libraries:
@@ -23,7 +47,7 @@ time
 ```
 
 # Other things
-The module is not perfect, there are still small limitations such as CoM and palm center for two hands.
+The module is not perfect, support for multiple hands in the frame at the same time is still being developed.
 It will hopefully be updated regularly.
 
 Thanks!
