@@ -1,4 +1,4 @@
-from turtle import Turtle
+#from turtle import Turtle
 import mediapipe as mp
 import cv2 as cv
 import numpy as np
@@ -162,11 +162,7 @@ class HandDetector():
 
         if self.results.multi_hand_landmarks:
             for hand_landmarks in self.results.multi_hand_landmarks:
-                finger_tips.append(hand_landmarks.landmark[4])
-                finger_tips.append(hand_landmarks.landmark[8])
-                finger_tips.append(hand_landmarks.landmark[12])
-                finger_tips.append(hand_landmarks.landmark[16])
-                finger_tips.append(hand_landmarks.landmark[20])
+                finger_tips = hand_landmarks.landmark[4:21:4]
 
             for points in finger_tips:
                 avg_x += points.x
