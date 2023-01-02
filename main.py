@@ -60,7 +60,7 @@ while cap.isOpened():
         cv.putText(img, "[Finger Count: " + str(int(len(fCnt))) + "]", (600, 50), cv.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
     
     if CHECKGRAB == True:
-        state = detector.checkGrab(frame)
+        state = detector.checkGrabCnt(frame)
         cv.putText(img, "[Grabbing: " + str(int(state)) + "]", (1050, 50), cv.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
     if CENTEROFMASS == True and hasHands:

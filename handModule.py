@@ -215,6 +215,32 @@ class HandDetector():
 
         return False
 
+    def checkGrabCnt(self, img, draw = True, debug = False):
+        grabCnt = 0
+        
+        if self.results.multi_hand_landmarks:
+            print(len(self.results.multi_hand_landmarks))
+            for hand_landmarks in self.results.multi_hand_landmarks:
+                avg_x, avg_y = 0, 0
+                fingerTips = hand_landmarks.landmark[4:21:4]
+                print(fingerTips[0].x)
+                for points in fingerTips:
+                    avg_x += points.x
+                    avg_y += points.y
+                
+                avg_x = avg_x/5
+                avg_y = avg_y/5
+
+                for i in range(0, 5):
+                    dist = math.sqrt(math.pow(fingerTips[i].x-avg_x, 2) + math.pow(fingerTips[i].y-avg_y, 2))
+                    if dist <= 0.025:
+                        grabCnt += 1
+                        break
+        else:
+            print("[Error! No hands detected]")
+
+        return grabCnt
+
     def swipeDirection(self, img, debug = False):
         """swipeDirection()
 
