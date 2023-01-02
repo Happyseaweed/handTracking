@@ -219,7 +219,6 @@ class HandDetector():
         grabCnt = 0
         
         if self.results.multi_hand_landmarks:
-            print(len(self.results.multi_hand_landmarks))
             for hand_landmarks in self.results.multi_hand_landmarks:
                 avg_x, avg_y = 0, 0
                 fingerTips = hand_landmarks.landmark[4:21:4]
