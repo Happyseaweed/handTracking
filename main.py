@@ -64,12 +64,14 @@ while cap.isOpened():
         cv.putText(img, "[Grabbing: " + str(int(state)) + "]", (1050, 50), cv.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 3)
 
     if CENTEROFMASS == True and hasHands:
-        centers = detector.center_of_mass(frame, 0)
-        cv.circle(img, (centers[0][0], centers[0][1]), 3, (0, 0, 255), 10)
+        centers = detector.center_of_mass(frame)
+        for hand in centers:
+            cv.circle(img, (hand[0], hand[1]), 3, (0, 0, 255), 10)
     
     if CENTEROFPALM == True and hasHands:
         palm = detector.palm_center(frame, 0)
-        cv.circle(img, (palm[0][0], palm[0][1]), 3, (255, 0, 0), 10)
+        for ind, hand in enumerate(palm):
+            cv.circle(img, (hand[0], hand[1]), 3, (255, 0, 0), 10)
 
 
     if SWIPEDIRECTION == True:

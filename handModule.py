@@ -6,7 +6,6 @@ import math
 import time
 
 
-
 class HandDetector():
     def __init__(self, mode = False, maxHands = 2, detectionCon= 0.5, trackCon = 0.5, grabbed = False, grabPos = []):
         self.mode = mode
@@ -114,8 +113,8 @@ class HandDetector():
         # Making sure there are hands within the camera frame first.
         if self.results.multi_hand_landmarks:
             # Palm and center of mass coordinates.
-            # center = self.center_of_mass(img, handNo)    
-            palm_c = self.palm_center(img, handNo)
+            # center = self.center_of_mass(img)    
+            palm_c = self.palm_center(img)
 
             # Calculating the distances for index to pinky.
             for i in range(8, 24, 4):
@@ -139,7 +138,7 @@ class HandDetector():
 
         return indexList
 
-    def checkGrab(self, img, handNo = 0, draw = True):
+    def checkGrab(self, img, draw = True):
         """checkGrab()
 
         This function works by calculating the avg point of the finger tips
@@ -200,8 +199,8 @@ class HandDetector():
         """
 
         if self.results.multi_hand_landmarks:
-            mass = self.center_of_mass(img, 0)
-            cent = self.palm_center(img, 0)
+            mass = self.center_of_mass(img)
+            cent = self.palm_center(img)
 
             if debug:
                 print("+-----CheckGrabAlt DEBUG-----+")
@@ -243,6 +242,8 @@ class HandDetector():
     def swipeDirection(self, img, debug = False):
         """swipeDirection()
 
+        NOTE: ONLY WORKS AS INTENDED WHEN 1 HAND IS DETECTED
+
         Concept: To determine the direction swiped, we use the 
         release position relative to the initial grab position
         
@@ -272,14 +273,14 @@ class HandDetector():
         if self.checkGrab(img):
             if self.grabbed == False:
                 self.grabbed = True
-                self.grabPos = self.center_of_mass(img, 0)
+                self.grabPos = self.center_of_mass(img)
         else:
             if self.grabbed == True:
                 self.grabbed = False
                 
                 # Calculate direction:
                 # Getting final position of hand when releasing grab
-                finalPos = self.center_of_mass(img, 0)
+                finalPos = self.center_of_mass(img)
                 
                 grab_x = self.grabPos[0][0]
                 grab_y = self.grabPos[0][1]
@@ -321,59 +322,59 @@ class HandDetector():
 
         return ret
 
-    def center_of_mass(self, img, handNo): #handNo: 0 = first hand, 1 = second hand
+    def center_of_mass(self, img): #handNo: 0 = first hand, 1 = second hand
         """center_of_mass()
         
         Args:
             img:    An image to process on
-            handNo: Number of hands in frame.
         Returns:
-            list: coordinates of the center of mass of the hand based on
+            list: coordinates of the center of mass of the hand(s) based on
                   the landmarks.
 
         """
         
         ret = []
         if self.results.multi_hand_landmarks:
-            hands = self.results.multi_hand_landmarks[handNo]
-            avg_x = 0
-            avg_y = 0
-            for ind, lm in enumerate(hands.landmark):
-                avg_x += lm.x * img.shape[1]
-                avg_y += lm.y * img.shape[0]
-            avg_x /= 21
-            avg_y /= 21
-            ret.append([int(avg_x), int(avg_y)])
+            for hand_landmarks in self.results.multi_hand_landmarks:
+                avg_x = 0
+                avg_y = 0
+                for ind, lm in enumerate(hand_landmarks.landmark):
+                    avg_x += lm.x * img.shape[1]
+                    avg_y += lm.y * img.shape[0]
+                avg_x /= 21
+                avg_y /= 21
+                ret.append([int(avg_x), int(avg_y)])
         
         return ret
 
-    def palm_center(self, img, handNo):
+    def palm_center(self, img):
         """palm_center()
         
         Args:
             img:    An image to process on
-            handNo: number of hands in frame.
         Returns:
-            list: coordinates of the center of palm
+            list: coordinates of the center of palm(s)
 
         """
         ret = []
         if self.results.multi_hand_landmarks:
-            hands = self.results.multi_hand_landmarks[handNo]
-            avg_x = 0
-            avg_y = 0
-            # 0, 5, 9, 13, 17
-            for ind in range(5, 21, 4):
-                avg_x += hands.landmark[ind].x * img.shape[1]
-                avg_y += hands.landmark[ind].y * img.shape[0]
+            for hand_landmarks in self.results.multi_hand_landmarks:
+                ## 0, 5, 9, 13, 17, points on the palm triangle on MediaPipe documentation.
+                fingerTips = hand_landmarks.landmark[5:18:4]
+                avg_x = 0
+                avg_y = 0
+            
+                for coords in fingerTips:
+                    avg_x += coords.x * img.shape[1]
+                    avg_y += coords.y * img.shape[0]
 
-            # 2 Times for better accuracy
-            avg_x += 2 * hands.landmark[0].x * img.shape[1]
-            avg_y += 2 * hands.landmark[0].y * img.shape[0]
+                # 2 Times for base of hand for better accuracy
+                avg_x += 2 * hand_landmarks.landmark[0].x * img.shape[1]
+                avg_y += 2 * hand_landmarks.landmark[0].y * img.shape[0]
 
-            avg_x /= 6
-            avg_y /= 6
-            ret.append([int(avg_x), int(avg_y)])
+                avg_x /= 6
+                avg_y /= 6
+                ret.append([int(avg_x), int(avg_y)])
         
         return ret
 
